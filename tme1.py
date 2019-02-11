@@ -98,18 +98,15 @@ def buildDocumentCollectionRegex(file_path):
     res = []
     with open(file_path) as f:
         texte = f.read().replace("\n", " ").split(bal_i)
-    for doc in texte[1:2]:
-        iDoc = re.search("\.[ITBAKWX]", doc)
-        req = re.findall("\.T .* \.[ITBAKWX]", doc)
-        print(req)
-        T = ""
-        if len(req):
-            T = req[0][3:-3]
-        res.append((iDoc, T))
+    for doc in texte[1:]:
+        iDoc = re.search("(.*?)(([.][I])|([.][T])|([.][B])|([.][A])|([.][K])|([.][W])|([.][X]))", doc)
+        iDoc = doc[iDoc.start()+1: iDoc.end()-3]
+        req = re.search("[.][T](.*?)(([.][I])|([.][B])|([.][A])|([.][K])|([.][W])|([.][X]))", doc)
+        req = doc[req.start()+3: req.end()-3]
+        res.append((iDoc, req))
     return res
 
-buildDocumentCollectionRegex("data/cacmShort.txt")
-
+#print(buildDocumentCollectionRegex("data/cacmShort.txt"))
 
 
 #normaliser sur index qui contient nb occ
@@ -123,8 +120,9 @@ class Document:
         self.T = texte
 
 class Parser:
-    def __init__(self, docs):
-        self.docs = docs
+    def __init__(self, path):
+        self.brut = docs
+        self.docs = buildDocCollectionSimple(path)
         
 class IndexerSimple:
     def indexation(self):
