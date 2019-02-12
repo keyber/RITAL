@@ -43,17 +43,27 @@ class IndexerSimple:
         return (ind, inv), (ind_n, inv_n)
     
     
-    def getTfsForDoc(self):
-        pass
+    def getTfsForDoc(self, ind, doc):
+        print("à vérifier")
+        return ind[doc]
     
-    def getTfIdfsForDoc(self):
-        pass
+    def getTfIDFsForDoc(self, ind, inv, doc):
+        #pas de "inv" en paramètre normalement ?
+        print("à vérifier")
+        return {np.log((1 + len(ind)) / (1 + len(inv[w]))) for w in ind[doc].keys()}
     
-    def getTfsForStem(self):
-        pass
+    def getTfsForStem(self, inv, stem):
+        print("à vérifier")
+        return inv[stem]
     
-    def getTfIDFsForStem(self):
-        pass
+    def getTfIDFsForStem(self, inv, stem):
+        print("à vérifier")
+        idf = len(inv[stem])
+        return {d:tf*idf for (d, tf) in inv[stem].items()}
+    
+    def getStrDoc(self, doc):
+        print("à vérifier")
+        return doc.T
 
 
     def create_tf_idf(self):
@@ -75,3 +85,4 @@ class IndexerSimple:
     
         return {d.I: {w: tf_idf(d.I, w) for w in index[d.I].keys()} for d in self.docs}
     
+        
