@@ -42,7 +42,7 @@ class c1(TF):
 class c2(TF):
     def getWeightsForQuery(self, query):
         req =  indexerSimple.counter(query)
-        return {i:req[i] for i in req.keys()}
+        return req
 
 class c3(TF):
     def getWeightsForQuery(self, query):
@@ -53,7 +53,7 @@ class c3(TF):
         for mot in req.keys():
             if(mot in cle_index_inv):
                 df=len(self.indexer.inv[mot])
-                result[mot]=log( (1+N) / (1+df) )
+                result[mot]=np.log( (1+N) / (1+df) )
         return result
 
 
@@ -72,7 +72,7 @@ class c4(Weighter):
         for mot in req.keys():
             if(mot in cle_index_inv):
                 df=len(self.indexer.inv[mot])
-                result[mot]=log( (1+N) / (1+df) )
+                result[mot]=np.log( (1+N) / (1+df) )
         return result
 
 class c5(Weighter):
@@ -81,13 +81,13 @@ class c5(Weighter):
         N=len(self.indexer.ind)
         for mot in self.indexer.ind[iDoc].keys():
             df=len(self.indexer.inv[mot])
-            idf[mot]=log( (1+N) / (1+df) )
+            idf[mot]=np.log( (1+N) / (1+df) )
         return {t: 1 + np.log(tf)*idf[t] for (t,tf) in self.indexer.ind[iDoc].items()}
 
     def getWeightsForStem(self, stem):
         N=len(self.indexer.ind)
         df=len(self.indexer.inv[stem])
-        idf=log( (1+N) / (1+df) )
+        idf=np.log( (1+N) / (1+df) )
         return {doc: 1 + np.log(tf)*idf for (doc,tf) in self.indexer.inv[stem].items()}
 
     def getWeightsForQuery(self, query):
@@ -96,9 +96,6 @@ class c5(Weighter):
         N=len(self.indexer.ind)
         for mot in req.keys():
             df=len(self.indexer.inv[mot])
-            idf[mot]=log( (1+N) / (1+df) )
-        return {t: 1 + np.log(tf)*idf[t] for (t,tf) in self.indexer.ind[iDoc].items()}
-
-
-w = Weighter(0, 0)
-print(w)
+            idf[mot]=np.log( (1+N) / (1+df) )
+        #return {t: 1 + np.log(tf)*idf[t] for (t,tf) in self.indexer.ind[iDoc].items()}
+        return {t: 1 + np.log(tf)*idf[t] for (t,tf) in req.items()}
