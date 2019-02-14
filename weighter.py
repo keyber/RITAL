@@ -46,7 +46,9 @@ class c2(TF):
 
 class c3(TF):
     def getWeightsForQuery(self, query):
-        pass
+        N=
+        df=
+        return log( (1+N) / (1+df) )
 
 
 class c4(Weighter):
