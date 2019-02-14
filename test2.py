@@ -13,9 +13,8 @@ def test1():
 
     indexer = indexerSimple.IndexerSimple(parsed.docs)
 
-    #contenu des indexes
-    (ind, inv), (ind_n, inv_n) = indexer.create_indexes()
+    indexer.create_indexes()
     
-    print(tme2.score(ind, inv, "home sales top"))
+    print(tme2.score(indexer.ind, indexer.inv, "home sales top"))
     
 test1()

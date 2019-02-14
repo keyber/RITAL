@@ -52,7 +52,7 @@ class c4(Weighter):
         return {t: 1 + np.log(tf) if t in iDoc else 0 for (t,tf) in self.ind[iDoc].items()}
     
     def getWeightsForStem(self, stem):
-        return {t: 1 + np.log(tf) if t in iDoc else 0 for (t,tf) in self.ind[iDoc].items()}
+        return {iDoc: 1 + np.log(tf) if t in iDoc else 0 for (iDoc,tf) in self.inv[stem].items()}
     
     def getWeightsForQuery(self, query):
         pass
