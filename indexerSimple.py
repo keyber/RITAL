@@ -3,9 +3,6 @@ import collections
 import numpy as np
 import textRepresenter
 
-#stopwords
-mots_vides = {'the', 'a', 'an', 'on', 'behind', 'under', 'there', 'in', 'on'}
-
 
 def counter(phrase):
     porter_stemer = textRepresenter.PorterStemmer()
@@ -30,20 +27,20 @@ class IndexerSimple:
         ind : {iDoc: {w: occ}}
         inv : {w: {iDoc: occ}}
         """
-        
+
         all_words = set()
         ind = {}
         ind_n = {}
         for d in self.docs:
             count = counter(d.T)
-            
+
             all_words = all_words.union(set(count.keys()))
-            
+
             ind[d.I] = count
-            
+
             f = 1 / sum(count.values())
             ind_n[d.I] = {key:val*f for (key,val) in count.items()}
-        
+
         inv = {w: {d.I: ind[d.I][w] for d in self.docs if w in ind[d.I]} for w in all_words}
         inv_n = {w: {d.I: ind_n[d.I][w] for d in self.docs if w in ind_n[d.I]} for w in all_words}
         
@@ -56,21 +53,21 @@ class IndexerSimple:
     def getTfsForDoc(self, ind, doc):
         print("à vérifier")
         return ind[doc]
-    
+
     def getTfIDFsForDoc(self, ind, inv, doc):
         #pas de "inv" en paramètre normalement ?
         print("à vérifier")
         return {np.log((1 + len(ind)) / (1 + len(inv[w]))) for w in ind[doc].keys()}
-    
+
     def getTfsForStem(self, inv, stem):
         print("à vérifier")
         return inv[stem]
-    
+
     def getTfIDFsForStem(self, inv, stem):
         print("à vérifier")
         idf = len(inv[stem])
         return {d:tf*idf for (d, tf) in inv[stem].items()}
-    
+
     def getStrDoc(self, doc):
         print("à vérifier")
         return doc.T
@@ -88,10 +85,9 @@ class IndexerSimple:
     
         def idf(w):
             return np.log((1 + N) / (1 + df(w)))
-    
+
         def tf_idf(i, w):
             return tf(i, w) * idf(w)
     
         return {d.I: {w: tf_idf(d.I, w) for w in self.ind[d.I].keys()} for d in self.docs}
     
-        
