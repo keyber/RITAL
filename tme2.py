@@ -7,5 +7,5 @@ def score(ind, inv, req):
     return set().intersection()
     return inv
 
-def score_vectoriel
-print()
+def score_vectoriel(q):
+    d[key] = d.get("key", 0) + cds
