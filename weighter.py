@@ -42,7 +42,7 @@ class c1(TF):
 class c2(TF):
     def getWeightsForQuery(self, query):
         req =  indexerSimple.counter(query)
-        return {i:req[i] for i in req.keys()}
+        return req
 
 class c3(TF):
     def getWeightsForQuery(self, query):
