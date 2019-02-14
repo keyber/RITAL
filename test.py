@@ -12,8 +12,7 @@ def test1():
 
     indexer = indexerSimple.IndexerSimple(parsed.docs)
 
-    (a,b),(c,d) = indexer.create_indexes()
-    for d in a,c,b,d:
+    for d in indexer.ind, indexer.inv,indexer.ind_n,indexer.inv_n:
         for e in d.items():
             print(e)
         print("\n")
@@ -34,28 +33,25 @@ def test2():
 
     indexer = indexerSimple.IndexerSimple(parsed2.docs)
 
-    #contenu des indexes
-    (ind, inv),(ind_n, inv_n) = indexer.create_indexes()
+    assert 'algebra' in indexer.ind['1']
+    assert len(indexer.ind['2']) == 6
+    assert sum(indexer.ind['11'].values()) == 8
 
-    assert 'algebra' in ind['1']
-    assert len(ind['2']) == 6
-    assert sum(ind['11'].values()) == 8
+    assert 'algebra' in indexer.ind_n['1']
+    assert abs(sum(indexer.ind_n['2'].values()) - 1) < 1e-4
 
-    assert 'algebra' in ind_n['1']
-    assert abs(sum(ind_n['2'].values()) - 1) < 1e-4
-
-    assert inv['matrix'] == {'3':1}
-    assert len(inv['comput']) == 5
+    assert indexer.inv['matrix'] == {'3':1}
+    assert len(indexer.inv['comput']) == 5
     
-    assert inv_n['matrix'] == {'3':.2}
-    assert len(inv_n['comput']) == 5
+    assert indexer.inv_n['matrix'] == {'3':.2}
+    assert len(indexer.inv_n['comput']) == 5
     
     tf_idf = indexer.create_tf_idf()
 
     #tfidf à la même structure que ind
-    assert tf_idf.keys() == ind.keys()
+    assert tf_idf.keys() == indexer.ind.keys()
     for i_doc in tf_idf.keys():
-        assert tf_idf[i_doc].keys() == ind[i_doc].keys()
+        assert tf_idf[i_doc].keys() == indexer.ind[i_doc].keys()
 
     #contenu de tfidf
     assert abs(tf_idf['4']['programm'] - 0.875) < 1e-3
