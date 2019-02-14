@@ -35,17 +35,17 @@ def test2():
     (ind, inv),(ind_n, inv_n) = indexer.create_indexes()
     
     assert 'algebra' in ind['1']
-    assert len(ind['2']) == 9
-    assert sum(ind['9'].values()) == 3
+    assert len(ind['2']) == 6
+    assert sum(ind['11'].values()) == 8
     
     assert 'algebra' in ind_n['1']
     assert abs(sum(ind_n['2'].values()) - 1) < 1e-4
     
     assert inv['matrix'] == {'3':1}
-    assert len(inv['of']) == 7
+    assert len(inv['comput']) == 5
     
     assert inv_n['matrix'] == {'3':.2}
-    assert len(inv_n['of']) == 7
+    assert len(inv_n['comput']) == 5
     
     tf_idf = indexer.create_tf_idf()
     

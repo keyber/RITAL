@@ -1,15 +1,17 @@
 import porter
 import collections
 import numpy as np
-
+import textRepresenter
 
 #stopwords
 mots_vides = {'the', 'a', 'an', 'on', 'behind', 'under', 'there', 'in', 'on'}
 
 
 def counter(phrase):
+    porter_stemer = textRepresenter.PorterStemmer()
+    #ou textRepresenter.getTextRepresentation
     l = (porter.stem(w.lower()) for w in phrase.split(" "))
-    l = (w for w in l if w not in mots_vides)
+    l = (w for w in l if w not in porter_stemer.stopWords)
     return dict(collections.Counter(l).items())
 
 
