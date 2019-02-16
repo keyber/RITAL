@@ -15,6 +15,7 @@ def counter(phrase):
 class IndexerSimple:
     def __init__(self, docs):
         self.docs = docs
+        self.N = len(docs)
         self.ind = None
         self.inv = None
         self.ind_n = None
@@ -48,6 +49,24 @@ class IndexerSimple:
         self.inv = inv
         self.ind_n = ind_n
         self.inv_n = inv_n
+
+    def tf(self, i, w):
+        return self.ind[i][w]
+
+    def df(self, w):
+        return len(self.inv[w])
+
+    def idf(self, w):
+        return np.log((1 + self.N) / (1 + self.df(w)))
+
+    def tf_idf(self, i, w):
+        return self.tf(i, w) * self.idf(w)
+
+
+    def create_tf_idf(self):
+        """{iDoc: {w: tf-idf}}"""
+        return {d.I: {w: self.tf_idf(d.I, w) for w in self.ind[d.I].keys()} for d in self.docs}
+    
     
     
     def getTfsForDoc(self, ind, doc):
@@ -72,22 +91,3 @@ class IndexerSimple:
         print("à vérifier")
         return doc.T
 
-
-    def create_tf_idf(self):
-        """{iDoc: {w: tf-idf}}"""
-        N = len(self.docs)
-    
-        def tf(i, w):
-            return self.ind[i][w]
-    
-        def df(w):
-            return len(self.inv[w])
-    
-        def idf(w):
-            return np.log((1 + N) / (1 + df(w)))
-
-        def tf_idf(i, w):
-            return tf(i, w) * idf(w)
-    
-        return {d.I: {w: tf_idf(d.I, w) for w in self.ind[d.I].keys()} for d in self.docs}
-    

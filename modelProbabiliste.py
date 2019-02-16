@@ -10,10 +10,14 @@ class Okapi(iRModel):
         avgdl = sum(len(d.T) for d in self.indexer.docs) / len(self.indexer.docs)
         scores = {}
         for d in self.indexer.docs:
-            tf_i_d = tf(yi, d)
-            score = idf(yi)
-            score *= tf_i_d / (tf_i_d + k1 - b + b*(len(d.T)/avgdl))
-            scores[d] = score
+            s = 0
+            for mot in query.keys():
+                tf_i_d = self.indexer.tf(d, mot)
+                score = idf(mot)
+                score *= tf_i_d / (tf_i_d + k1 * (1- b + b*(len(d.T)/avgdl)))
+                #todo verbosité saturation L2 Poisson
+                s += score
+            scores[d] = s
         return scores
     
     def fitCrossValidation(self):
