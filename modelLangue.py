@@ -30,5 +30,3 @@ class ModelLangue(iRModel):
             
         return scores
     
-    def fitCrossValidation(self):
-        pass

@@ -6,11 +6,11 @@ class IRModel(ABC):
         self.indexer = indexer
     
     @abstractmethod
-    def getScores(self, query):
+    def getScores(self, query, params):
         """{doc : score}"""
         pass
     
-    def getRanking(self, query):
+    def getRanking(self, query, params):
         """[(doc, score)] triée"""
         return sorted(self.getScores(query, params).items(), key=lambda x: x[1], reverse=True)
     
