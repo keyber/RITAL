@@ -1,16 +1,17 @@
 import indexerSimple
 import iRModel
 
+
 class ModelLangue(iRModel):
     """jelinek-Mercer, suppose :
     indépendances termes doc
     indépendances termes requete
     termes requete distincts"""
     
-    def getScores(self, query, requeteLongue=False):
+    def getScores(self, query, params):
+        lamb = params[0]
         #suppose indépendances
         query = indexerSimple.counter(query)
-        lamb = .2 if requeteLongue else .8
         
         len_coll = sum(len(d.T) for d in self.indexer.docs)
         
@@ -28,3 +29,6 @@ class ModelLangue(iRModel):
             scores[d] = score
             
         return scores
+    
+    def fitCrossValidation(self):
+        pass
