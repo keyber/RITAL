@@ -1,5 +1,4 @@
 import re
-print("load collection")
 
 
 class Document:
@@ -11,14 +10,13 @@ class Document:
 class Parser:
     def __init__(self, docs):
         self.docs = {Document(ident, text) for (ident, text) in docs}
-    
+
     def afficher(self):
         for d in self.docs:
             print("Id : " + str(d.I) + ", Texte : " + str(d.T))
 
 
 def loadCollection(list_docs):
-    print("load collection")
     return Parser(enumerate(list_docs))
 
 
@@ -28,44 +26,44 @@ bal_i = '.I'
 bal_t = '.T'
 
 
-def buildDocCollectionSimple(file_path, label=bal_t):
-    """Préserve les \n"""
+def buildDocCollectionSimple(file_path):
+    """travaille ligne par ligne"""
     res = []
     with open(file_path) as f:
         s = f.readline()
-        
+
         while s:
             #se place à la première balise I
             while s[:2] != bal_i and s:
                 s = f.readline()
-            
+
             #pas de balise I, fin du doc
             if not s:
                 break
-            
+
             #l'indice du document est sur la même ligne que la balise I
             idoc = s.split()[1]
-            
+
             lines = []
-            
+
             s = f.readline()
             #cherche balise T (ou I, auquel cas il n'y a pas de T)
-            while s[:2] != label and s[:2] != bal_i and s:
+            while s[:2] != bal_t and s[:2] != bal_i and s:
                 s = f.readline()
-            
-            if s[:2] == label:
+
+            if s[:2] == bal_t:
                 s = f.readline()
                 #copie tout jusqu'à rencontrer n'importe quelle balise
                 while s[:2] not in balises and s:
                     lines.append(s[:-1])  #ne copie pas le \n
                     s = f.readline()
-            
-            res.append((idoc, lines))
+
+            res.append((idoc, " ".join(lines)))
     return Parser(res)
 
 
-def buildDocumentCollectionRegex(file_path, char='T'):
-    """Ne préserve pas les \n"""
+def buildDocumentCollectionRegex(file_path):
+    """travaille sur le document vu comme un grande chaîne"""
     res = []
     with open(file_path) as f:
         texte = f.read().replace("\n", " ").split(bal_i)
@@ -75,8 +73,11 @@ def buildDocumentCollectionRegex(file_path, char='T'):
         iDoc = re.search("(.*?)(([.][I])|([.][T])|([.][B])|([.][A])|([.][K])|([.][W])|([.][X]))", doc)
         iDoc = doc[iDoc.start() + 1: iDoc.end() - 3]
         #On récupere le texte du document
-        txt = re.search("[.]["+char+"](.*?)(([.][I])|([.][B])|([.][A])|([.][K])|([.][W])|([.][X]))", doc)
+        txt = re.search("[.][T](.*?)(([.][I])|([.][B])|([.][A])|([.][K])|([.][W])|([.][X]))", doc)
         if txt is not None:
             txt = doc[txt.start() + 3: txt.end() - 3]
+        else:
+            print("le idoc est "+str(iDoc))
+            print("##########################")
         res.append((iDoc, txt))
     return Parser(res)
