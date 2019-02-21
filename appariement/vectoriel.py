@@ -1,4 +1,5 @@
-import iRModel
+from appariement import iRModel
+
 
 class Vectoriel(iRModel.IRModel):
     def __init__(self,w,n):

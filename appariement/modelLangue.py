@@ -1,5 +1,5 @@
-import indexerSimple
-import iRModel
+from indexation import indexerSimple
+from appariement import iRModel
 
 
 class ModelLangue(iRModel):

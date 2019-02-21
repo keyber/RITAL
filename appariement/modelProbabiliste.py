@@ -1,5 +1,5 @@
-import indexerSimple
-import iRModel
+from indexation import indexerSimple
+from appariement import iRModel
 import numpy as np
 
 
@@ -21,7 +21,7 @@ class Okapi(iRModel):
             for mot in query.keys():
                 tf_i_d = self.indexer.tf(d, mot)
                 score = idf_mot[mot]
-                score *= tf_i_d / (tf_i_d + k1 * (1- b + b*(len(d.T)/avgdl)))
+                score *= tf_i_d / (tf_i_d + k1 * (1 - b + b*(len(d.T)/avgdl)))
                 #todo verbosité saturation L2 Poisson
                 s += score
             scores[d] = s

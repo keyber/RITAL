@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 import numpy as np
-import indexerSimple
+from indexation import indexerSimple
+
 
 class Weighter(ABC):
     def __init__(self, indexer):

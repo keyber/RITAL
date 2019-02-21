@@ -1,6 +1,5 @@
 import numpy as np
-import modelLangue
-import modelProbabiliste
+from appariement import modelLangue, modelProbabiliste
 
 
 def optimisationModeleLangue(debut, fin, nbPoint, donnees, labels):
