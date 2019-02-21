@@ -1,8 +1,8 @@
-import indexerSimple
-import parser
+from indexation import indexerSimple, parser
 import tme2
 import weighter
 import vectoriel
+
 
 def test1():
     docs = ["the new home has home been saled on top forecasts",
@@ -15,7 +15,8 @@ def test1():
     indexer = indexerSimple.IndexerSimple(parsed.docs)
 
     #print(tme2.score("home sales top",indexer.inv))
-    print(tme2.score_vectoriel("home sales top",indexer.inv))
+    print(tme2.score_vectoriel("home sales top", indexer.inv))
+
 
 def test2():
     docs = ["the new home has home been saled on top forecasts",
@@ -26,7 +27,9 @@ def test2():
     indexer = indexerSimple.IndexerSimple(parsed.docs)
     w = weighter.c5(indexer)
     print(w.getWeightsForDoc(0))
-    v = vectoriel.Vectoriel(w,False)
+    v = vectoriel.Vectoriel(indexer, w, False)
     print(v.getScores("home"))
+    
+
 test1()
 test2()
