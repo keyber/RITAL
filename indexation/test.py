@@ -1,5 +1,5 @@
 import indexerSimple
-import parser
+import myParser
 
 
 def test1():
@@ -8,7 +8,7 @@ def test1():
             "there is an increase in home sales in july",
             "july encounter a new home sales rise"]
     
-    parsed = parser.loadCollection(docs)
+    parsed = myParser.loadCollection(docs)
     
     indexer = indexerSimple.IndexerSimple(parsed.docs)
     
@@ -19,15 +19,19 @@ def test1():
 
 
 def test2():
-    parsed = parser.buildDocCollectionSimple("../data/cacmShort.txt")
-    parsed2 = parser.buildDocumentCollectionRegex("../data/cacmShort.txt")
+    parsed = myParser.buildDocCollectionSimple("./data/cacmShort.txt")
+    parsed2 = myParser.buildDocumentCollectionRegex("./data/cacmShort.txt")
+    parsed = myParser.buildDocCollectionSimple("./data/cacm/cacm.qry", ".W")
+    parsed2 = myParser.buildDocumentCollectionRegex("./data/cacm/cacm.qry", 'W')
     
-    #parsed.afficher( )
+    #parsed.afficher()
     #parsed2.afficher()
     
     #équivalence des deux méthodes de parsing
     for d1, d2 in zip(sorted(parsed.docs, key=lambda x: x.I), sorted(parsed2.docs, key=lambda x: x.I)):
         assert d1.I == d2.I
+        print(" ".join(d1.T))
+        print(d2.T)
         assert " ".join(d1.T) == d2.T
     
     indexer = indexerSimple.IndexerSimple(parsed2.docs)

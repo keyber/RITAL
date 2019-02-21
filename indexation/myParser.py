@@ -1,4 +1,5 @@
 import re
+print("load collection")
 
 
 class Document:
@@ -17,6 +18,7 @@ class Parser:
 
 
 def loadCollection(list_docs):
+    print("load collection")
     return Parser(enumerate(list_docs))
 
 
@@ -26,7 +28,7 @@ bal_i = '.I'
 bal_t = '.T'
 
 
-def buildDocCollectionSimple(file_path):
+def buildDocCollectionSimple(file_path, label=bal_t):
     """Préserve les \n"""
     res = []
     with open(file_path) as f:
@@ -48,10 +50,10 @@ def buildDocCollectionSimple(file_path):
             
             s = f.readline()
             #cherche balise T (ou I, auquel cas il n'y a pas de T)
-            while s[:2] != bal_t and s[:2] != bal_i and s:
+            while s[:2] != label and s[:2] != bal_i and s:
                 s = f.readline()
             
-            if s[:2] == bal_t:
+            if s[:2] == label:
                 s = f.readline()
                 #copie tout jusqu'à rencontrer n'importe quelle balise
                 while s[:2] not in balises and s:
@@ -62,7 +64,7 @@ def buildDocCollectionSimple(file_path):
     return Parser(res)
 
 
-def buildDocumentCollectionRegex(file_path):
+def buildDocumentCollectionRegex(file_path, char='T'):
     """Ne préserve pas les \n"""
     res = []
     with open(file_path) as f:
@@ -73,7 +75,8 @@ def buildDocumentCollectionRegex(file_path):
         iDoc = re.search("(.*?)(([.][I])|([.][T])|([.][B])|([.][A])|([.][K])|([.][W])|([.][X]))", doc)
         iDoc = doc[iDoc.start() + 1: iDoc.end() - 3]
         #On récupere le texte du document
-        txt = re.search("[.][T](.*?)(([.][I])|([.][B])|([.][A])|([.][K])|([.][W])|([.][X]))", doc)
-        txt = doc[txt.start() + 3: txt.end() - 3]
+        txt = re.search("[.]["+char+"](.*?)(([.][I])|([.][B])|([.][A])|([.][K])|([.][W])|([.][X]))", doc)
+        if txt is not None:
+            txt = doc[txt.start() + 3: txt.end() - 3]
         res.append((iDoc, txt))
     return Parser(res)

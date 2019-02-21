@@ -1,7 +1,10 @@
-from indexation import indexerSimple, parser
+import sys
 import tme2
 import weighter
 import vectoriel
+import indexerSimple
+sys.path.append('./indexation/')
+import myParser
 
 
 def test1():
@@ -10,7 +13,7 @@ def test1():
             "there is an increase in sales in july",
             "july encounter a new home sales rise"]
 
-    parsed = parser.loadCollection(docs)
+    parsed = myParser.loadCollection(docs)
 
     indexer = indexerSimple.IndexerSimple(parsed.docs)
 
@@ -23,7 +26,7 @@ def test2():
             "the home sales rise in july",
             "there is an increase in sales in july",
             "july encounter a new home sales rise"]
-    parsed = parser.loadCollection(docs)
+    parsed = myParser.loadCollection(docs)
     indexer = indexerSimple.IndexerSimple(parsed.docs)
     w = weighter.c5(indexer)
     print(w.getWeightsForDoc(0))

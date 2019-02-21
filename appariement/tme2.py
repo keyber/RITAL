@@ -1,4 +1,6 @@
-from indexation import indexerSimple
+import sys
+sys.path.append('./indexation/')
+import indexerSimple
 
 
 def score(req, ind_inv):

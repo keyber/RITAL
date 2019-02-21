@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 import numpy as np
-from indexation import indexerSimple
+import sys
+sys.path.append('./indexation/')
+import indexerSimple
 
 
 class Weighter(ABC):
