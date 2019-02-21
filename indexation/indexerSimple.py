@@ -1,4 +1,5 @@
-from indexation import porter, textRepresenter
+import porter
+import textRepresenter
 import collections
 import numpy as np
 

@@ -1,5 +1,7 @@
 from indexation import indexerSimple, parser
-from appariement import tme2, weighter, vectoriel
+import tme2
+import weighter
+import vectoriel
 
 
 def test1():
@@ -25,7 +27,7 @@ def test2():
     indexer = indexerSimple.IndexerSimple(parsed.docs)
     w = weighter.c5(indexer)
     print(w.getWeightsForDoc(0))
-    v = vectoriel.Vectoriel(w, False)
+    v = vectoriel.Vectoriel(indexer, w, False)
     print(v.getScores("home"))
     
 

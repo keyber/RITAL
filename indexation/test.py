@@ -1,4 +1,5 @@
-from indexation import indexerSimple, parser
+import indexerSimple
+import parser
 
 
 def test1():
@@ -18,8 +19,8 @@ def test1():
 
 
 def test2():
-    parsed = parser.buildDocCollectionSimple("data/cacmShort.txt")
-    parsed2 = parser.buildDocumentCollectionRegex("data/cacmShort.txt")
+    parsed = parser.buildDocCollectionSimple("../data/cacmShort.txt")
+    parsed2 = parser.buildDocumentCollectionRegex("../data/cacmShort.txt")
     
     #parsed.afficher( )
     #parsed2.afficher()

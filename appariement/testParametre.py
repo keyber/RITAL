@@ -1,10 +1,11 @@
 import numpy as np
-from appariement import modelLangue, modelProbabiliste
+import jelinekMercer
+import okapiBM25
 
 
 def optimisationModeleLangue(debut, fin, nbPoint, donnees, labels):
     rangeLamba = np.linspace(debut, fin, nbPoint)
-    m = modelLangue.ModelLangue()
+    m = jelinekMercer.JelinekMercer()
     mapLambda = []
     for l in rangeLamba:
         s = 0
@@ -18,7 +19,7 @@ def optimisationModeleLangue(debut, fin, nbPoint, donnees, labels):
 def optimisationOkapi(debut1, fin1, nbPoint1, debut2, fin2, nbPoint2, donnees, labels):
     rangeK = np.linspace(debut1, fin1, nbPoint1)
     rangeB = np.linspace(debut2, fin2, nbPoint2)
-    m = modelProbabiliste.Okapi()
+    m = okapiBM25.OkapiBM25()
     mapKB = []
     param = []
     for k1 in rangeK:
