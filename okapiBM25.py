@@ -1,17 +1,17 @@
-from indexation import indexerSimple
+import indexerSimple
 import iRModel
 import numpy as np
 
 
-class OkapiBM25(iRModel):
+class OkapiBM25(iRModel.IRModel):
     def __init__(self, indexer):
-        super().__init(indexer)
+        super().__init__(indexer)
         self.k1 = None #1.2
         self.b = None #.75
-        
+
     def getScores(self, query, pertinences=None):
         query = indexerSimple.counter(query)
-        
+
         idf_mot = {mot: self.idf(mot, pertinences) for mot in query.keys()}
         avgdl = sum(len(d.T) for d in self.indexer.docs) / len(self.indexer.docs)
         scores = {}

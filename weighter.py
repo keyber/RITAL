@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 import numpy as np
 import sys
 sys.path.append('../')
-from indexation import indexerSimple
+import indexerSimple
 
 
 class Weighter(ABC):
@@ -30,7 +30,7 @@ class TF(Weighter):
         return self.indexer.ind[iDoc]
 
     def getWeightsForStem(self, stem):
-        return self.indexer.inv[stem]
+        return self.indexer.inv.get(stem,{})
 
     @abstractmethod
     def getWeightsForQuery(self, query):

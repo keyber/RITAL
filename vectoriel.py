@@ -12,6 +12,7 @@ class Vectoriel(iRModel.IRModel):
     def getScores(self, query):
         if not self.normalized:
             req = self.weighter.getWeightsForQuery(query)
+            print(req)
             result = {}
             for mot in req:
                 dicoTi = self.weighter.getWeightsForStem(mot)
@@ -25,7 +26,7 @@ class Vectoriel(iRModel.IRModel):
             for mot in req:
                 dicoTi = self.weighter.getWeightsForStem(mot)
                 for key,value in dicoTi.items() :
-                    normeDoc = np.sqrt(np.sum(np.power(self.weighter.getWeightsForDoc(key).values())))
+                    normeDoc = np.sqrt(np.sum(np.power(list(self.weighter.getWeightsForDoc(key).values()),2)))
                     result[key]=result.get(key,0)+ (value * req[mot])/(normeR+normeDoc)
             """
             req = indexerSimple.counter(query)

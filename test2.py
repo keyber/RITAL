@@ -2,6 +2,7 @@ import weighter
 import vectoriel
 import tme2
 import indexerSimple, parser
+import okapiBM25
 
 
 def test1():
@@ -31,15 +32,18 @@ def test2():
     print(v.getScores("home"))
 
 def vraiFichier():
-        parsed = parser.buildDocCollectionSimple("../data/cacmShort.txt")
+        parsed = parser.buildDocCollectionSimple("data/cacmShort.txt")
         indexer = indexerSimple.IndexerSimple(parsed.docs)
         tf_idf = indexer.create_tf_idf()
-        w = weighter.c5(indexer)
-        print(w.getWeightsForDoc(0))
-        v = vectoriel.Vectoriel(indexer, w, False)
-        print(v.getScores("home"))
-
-
+        m = okapiBM25.OkapiBM25(indexer)
+        #w = weighter.c1(indexer)
+        #m = vectoriel.Vectoriel(indexer, w, True)
+        dict = m.getScores("Algebraic")
+        print(dict)
+        for d in indexer.docs:
+            for k in range(len(dict)):
+                if(d.I == list(dict.keys())[k]):
+                    print(d.T)
 
 
 #test1()

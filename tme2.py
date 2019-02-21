@@ -1,4 +1,4 @@
-from indexation import indexerSimple
+import indexerSimple
 
 
 def score(req, ind_inv):
@@ -8,7 +8,7 @@ def score(req, ind_inv):
     for mot in req:
         if mot in cle_index_inv:
             doc.append(list(ind_inv[mot].keys()))
-    
+
     inter = doc[0]
     for k in range(1, len(doc)):
         inter = list(set(inter) & set(doc[k]))
