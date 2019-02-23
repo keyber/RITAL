@@ -1,47 +1,47 @@
-from indexation import indexerSimple
 import iRModel
 import numpy as np
 
 
-class JelinekMercer(iRModel):
+class JelinekMercer(iRModel.IRModel):
     """jelinek-Mercer, suppose :
     indépendances termes doc
     indépendances termes requete
     termes requete distincts"""
 
-    def __init__(self, indexer):
+    def __init__(self, indexer, lamb=None):
         super().__init__(indexer)
-        self.lamb = None
+        self.lamb = lamb
 
-    def getScores(self, query, params):
-        lamb = params[0]
-        #suppose indépendances
-        query = indexerSimple.counter(query)
-
-        len_coll = sum(len(d.T) for d in self.indexer.docs)
+    def _getScores(self, query, pertinences=None):
+        if self.lamb is None:
+            raise AttributeError("fit has not been called")
+        
+        len_coll = sum(len(d.T) for d in self.indexer.docs.values())
 
         #facteurs de lissage de chaque terme de la requete (définis par la collection)
         p_q_mc = {}
         for t, tf_q in query.items():
-            p_q_mc[t] = sum(self.indexer.ind[d.I][t] for d in self.indexer.docs) / len_coll
+            p_q_mc[t] = sum(self.indexer.ind[d.I].get(t, 0) for d in self.indexer.docs.values()) / len_coll
 
         #scores de chaque doc
         scores = {}
-        for d in self.indexer.docs:
-            score = 1
-            for t in query.keys():
-                score *= (1-lamb) * self.indexer.ind_n[d][t] + lamb * p_q_mc[t]
-            scores[d] = score
+        for t in query.keys():
+            for iDoc in self.indexer.inv[t].keys():
+                scores[iDoc] = scores.get(iDoc, 1) * ((1-self.lamb) * self.indexer.ind_n[iDoc][t] + self.lamb * p_q_mc[t])
 
         return scores
 
     def fit(self, debut, fin, nbPoint, donnees, labels):
         rangeLamba = np.linspace(debut, fin, nbPoint)
-        mapLambda = []
+        l_max, s_max = 0, float("-inf")
         for l in rangeLamba:
+            self.lamb = l
             s = 0
             for k in range(len(donnees)):
-                predictionModele = self.getRanking(donnees[k], [l])
+                predictionModele = self.getRanking(donnees[k])
                 s += self.avgPrec(predictionModele, labels[k])
-            mapLambda.append(s/len(donnees))
-        self.lamb = rangeLamba[np.argmax(mapLambda)]
+            if s > s_max:
+                s_max = s
+                l_max = l
+        
+        self.lamb = l_max

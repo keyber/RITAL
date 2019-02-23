@@ -1,29 +1,28 @@
-import indexerSimple
 import iRModel
 import numpy as np
 
 
 class OkapiBM25(iRModel.IRModel):
-    def __init__(self, indexer):
+    def __init__(self, indexer, k1=None, b=None):
         super().__init__(indexer)
-        self.k1 = None #1.2
-        self.b = None #.75
+        self.k1 = k1 #1.2
+        self.b = b #.75
 
-    def getScores(self, query, pertinences=None):
-        query = indexerSimple.counter(query)
+    def _getScores(self, query, pertinences=None):
+        if self.k1 is None or self.b is None:
+            raise AttributeError("fit has not been called")
 
         idf_mot = {mot: self.idf(mot, pertinences) for mot in query.keys()}
-        avgdl = sum(len(d.T) for d in self.indexer.docs) / len(self.indexer.docs)
+        avgdl = sum(len(d.T) for d in self.indexer.docs.values()) / len(self.indexer.docs)
         scores = {}
-        for d in self.indexer.docs:
-            s = 0
-            for mot in query.keys():
-                tf_i_d = self.indexer.tf(d, mot)
+        for mot in query.keys():
+            for iDoc in self.indexer.inv[mot].keys():
+                tf_i_d = self.indexer.tf(iDoc, mot)
                 score = idf_mot[mot]
-                score *= tf_i_d / (tf_i_d + self.k1 * (1 - self.b + self.b*(len(d.T)/avgdl)))
-                #todo verbosité saturation L2 Poisson
-                s += score
-            scores[d] = s
+                
+                score *= tf_i_d / (tf_i_d + self.k1 * (1 - self.b + self.b*(len(self.indexer.docs[iDoc].T)/avgdl)))
+                #todo verbosité saturation L2 Poisson ?
+                scores[iDoc] = scores.get(iDoc, 0) + score
         return scores
 
     def idf(self, query, pertinences):
@@ -37,14 +36,19 @@ class OkapiBM25(iRModel.IRModel):
     def fit(self, debut1, fin1, nbPoint1, debut2, fin2, nbPoint2, donnees, labels):
         rangeK = np.linspace(debut1, fin1, nbPoint1)
         rangeB = np.linspace(debut2, fin2, nbPoint2)
-        mapKB = []
-        param = []
+        k1_max, b_max, s_max = 0, 0, float("-inf")
         for k1 in rangeK:
+            self.k1 = k1
             for b in rangeB:
+                self.b = b
                 s = 0
                 for k in range(len(donnees)):
-                    predictionModele = self.getRanking(donnees[k], [k1, b])
+                    predictionModele = self.getRanking(donnees[k])
                     s += self.avgPrec(predictionModele, labels[k])
-                mapKB.append(s/len(donnees))
-                param.append([k1, b])
-        self.k1, self.b = param[np.argmax(mapKB)]
+                    
+                if s > s_max:
+                    s_max = s
+                    k1_max = k1
+                    b_max = b
+                    
+        self.k1, self.b = k1_max, b_max

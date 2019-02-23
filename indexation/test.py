@@ -2,7 +2,7 @@ import indexerSimple
 import myParser
 
 
-def test1():
+def testVeryShort():
     docs = ["the new home has been saled on top forecasts",
             "the home sales rise in july",
             "there is an increase in home sales in july",
@@ -16,16 +16,21 @@ def test1():
         print("\n")
 
 
-def test2():
-    parsed = myParser.buildDocCollectionSimple("./data/cacmShort.txt")
-    parsed2 = myParser.buildDocumentCollectionRegex("./data/cacmShort.txt")
-    #parsed = myParser.buildDocCollectionSimple("./data/cacm/cacm.qry", ".W")
-    #parsed2 = myParser.buildDocumentCollectionRegex("./data/cacm/cacm.qry", 'W')
+def testShort():
+    parsed = None
+    parsed2 = None
+    file = "data/cacmShort.txt"
+    for path in ["./", "../"]:
+        try:
+            parsed = myParser.buildDocCollectionSimple(path+file)
+            parsed2 = myParser.buildDocumentCollectionRegex(path+file)
+            break
+        except FileNotFoundError:
+            pass
+    assert parsed and parsed2
     
-    #parsed.afficher()
-
     #équivalence des deux méthodes de parsing
-    for d1, d2 in zip(sorted(parsed.docs, key=lambda x: x.I), sorted(parsed2.docs, key=lambda x: x.I)):
+    for d1, d2 in zip(sorted(parsed.docs.values(), key=lambda x: x.I), sorted(parsed2.docs.values(), key=lambda x: x.I)):
         assert d1.I == d2.I
         assert d1.T == d2.T
 
@@ -55,5 +60,27 @@ def test2():
     assert abs(tf_idf['4']['programm'] - 0.875) < 1e-3
 
 
-#test1()
-test2()
+def testLong():
+    parsed = None
+    file = "data/cisi/cisi.txt"
+    for path in ["./", "../"]:
+        try:
+            parsed = myParser.buildDocCollectionSimple(path + file, '.W')
+            break
+        except FileNotFoundError:
+            pass
+    assert parsed
+    
+    indexer = indexerSimple.IndexerSimple(parsed.docs)
+    
+    for e in list(indexer.ind.items())[:10]:
+        print(e)
+    
+    tf_idf = indexer.create_tf_idf()
+    
+    for e in list(tf_idf.items())[:10]:
+        print(e)
+    
+#testVeryShort()
+testShort()
+testLong()

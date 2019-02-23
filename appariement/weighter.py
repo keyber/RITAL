@@ -40,13 +40,13 @@ class TF(Weighter):
 class c1(TF):
     def getWeightsForQuery(self, query):
         query = indexerSimple.counter(query)
-        return {i: 1 for i in query.keys()}
+        return {i: 1.0 for i in query.keys()}
 
 
 class c2(TF):
     def getWeightsForQuery(self, query):
         query = indexerSimple.counter(query)
-        return query
+        return {t: float(tf) for (t,tf) in query.items()}
 
 
 class c3(TF):
@@ -81,6 +81,9 @@ class c5(Weighter):
         return {t: 1 + np.log(tf) * idf[t] for (t, tf) in self.indexer.ind[iDoc].items()}
 
     def getWeightsForStem(self, stem):
+        if stem not in self.indexer.inv:
+            print("warning: stem " + stem + " not in docs")
+            return {}
         idf = self.indexer.idf(stem)
         return {doc: 1 + np.log(tf) * idf for (doc, tf) in self.indexer.inv[stem].items()}
 

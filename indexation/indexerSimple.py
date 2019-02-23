@@ -7,7 +7,7 @@ import numpy as np
 def counter(phrase):
     porter_stemer = textRepresenter.PorterStemmer()
     #ou textRepresenter.getTextRepresentation
-    l = (porter.stem(w.lower()) for w in phrase.split(" "))
+    l = (porter.stem(w.lower()) for w in phrase.split(" ") if w!="")
     l = (w for w in l if w not in porter_stemer.stopWords)
     return dict(collections.Counter(l).items())
 
@@ -31,7 +31,7 @@ class IndexerSimple:
         all_words = set()
         ind = {}
         ind_n = {}
-        for d in self.docs:
+        for d in self.docs.values():
             count = counter(d.T)
 
             all_words = all_words.union(set(count.keys()))
@@ -41,8 +41,8 @@ class IndexerSimple:
             f = 1 / sum(count.values())
             ind_n[d.I] = {key: val * f for (key, val) in count.items()}
 
-        inv = {w: {d.I: ind[d.I][w] for d in self.docs if w in ind[d.I]} for w in all_words}
-        inv_n = {w: {d.I: ind_n[d.I][w] for d in self.docs if w in ind_n[d.I]} for w in all_words}
+        inv = {w: {d.I: ind[d.I][w] for d in self.docs.values() if w in ind[d.I]} for w in all_words}
+        inv_n = {w: {d.I: ind_n[d.I][w] for d in self.docs.values() if w in ind_n[d.I]} for w in all_words}
 
         self.ind = ind
         self.inv = inv
@@ -50,10 +50,10 @@ class IndexerSimple:
         self.inv_n = inv_n
 
     def tf(self, i, w):
-        return self.ind[i][w]
+        return self.ind[i].get(w, 0)
 
     def df(self, w):
-        return len(self.inv[w])
+        return len(self.inv[w]) if w in self.inv else 0
 
     def idf(self, w):
         return np.log((1 + self.N) / (1 + self.df(w)))
@@ -63,7 +63,7 @@ class IndexerSimple:
 
     def create_tf_idf(self):
         """{iDoc: {w: tf-idf}}"""
-        return {d.I: {w: self.tf_idf(d.I, w) for w in self.ind[d.I].keys()} for d in self.docs}
+        return {d.I: {w: self.tf_idf(d.I, w) for w in self.ind[d.I].keys()} for d in self.docs.values()}
 
     def getTfsForDoc(self, ind, doc):
         print("à vérifier")

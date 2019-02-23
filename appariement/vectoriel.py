@@ -7,26 +7,24 @@ class Vectoriel(iRModel.IRModel):
         super().__init__(indexer)
         self.weighter = weighter
         self.normalized = normalized
-
-    def getScores(self, query):
+    
+    def _getScores(self, query, pertinences=None):
+        query = " ".join(query.keys())
+        query = self.weighter.getWeightsForQuery(query)
+        result = {}
+        
         if not self.normalized:
-            req = self.weighter.getWeightsForQuery(query)
-            print(req)
-            result = {}
-            for mot in req:
+            for mot in query:
                 dicoTi = self.weighter.getWeightsForStem(mot)
-                for key,value in dicoTi.items() :
-                    result[key]=result.get(key,0)+value * req[mot]
-            return result
+                for key, value in dicoTi.items():
+                    result[key] = result.get(key, 0) + value * query[mot]
         else:
-            req = self.weighter.getWeightsForQuery(query)
-            result = {}
-            normeR = np.sqrt(np.sum(np.power(list(req.values()), 2)))
-            for mot in req:
+            normeR = np.sqrt(np.sum(np.power(list(query.values()), 2)))
+            for mot in query:
                 dicoTi = self.weighter.getWeightsForStem(mot)
-                for key,value in dicoTi.items() :
-                    normeDoc = np.sqrt(np.sum(np.power(list(self.weighter.getWeightsForDoc(key).values()),2)))
-                    result[key]=result.get(key,0)+ (value * req[mot])/(normeR+normeDoc)
+                for key, value in dicoTi.items():
+                    normeDoc = np.sqrt(np.sum(np.power(list(self.weighter.getWeightsForDoc(key).values()), 2)))
+                    result[key] = result.get(key, 0) + (value * query[mot]) / (normeR + normeDoc)
             """
             req = indexerSimple.counter(query)
             cle_index_inv = self.indexer.ind_inv.keys()
@@ -39,6 +37,5 @@ class Vectoriel(iRModel.IRModel):
                         #result[cle] = result.get(cle,0) + (ind_inv[mot][cle]*req[mot])/(normeR+normeDoc)
                         result[cle] = result.get(cle, 0) + (self.weighter.getWeightsForStem(mot)[cle] * req[mot]) / (
                                 normeR + normeDoc)
-            return result
             """
-            return result
+        return result

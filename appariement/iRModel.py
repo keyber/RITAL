@@ -1,19 +1,29 @@
 from abc import ABC, abstractmethod
 import numpy as np
-
+import indexerSimple
 
 class IRModel(ABC):
     def __init__(self, indexer):
         self.indexer = indexer
     
-    @abstractmethod
     def getScores(self, query, pertinences=None):
+        """{doc : score}"""
+        #les documents sont stemmés, on stemme donc aussi les mots de la requête
+        query = indexerSimple.counter(query)
+        
+        #enlève les mots de la requête qui n'apparaissent dans aucun document du corpus
+        query = {t:tf for (t,tf) in query.items() if t in self.indexer.inv}
+        
+        return self._getScores(query, pertinences)
+    
+    @abstractmethod
+    def _getScores(self, query, pertinences=None):
         """{doc : score}"""
         pass
     
     def getRanking(self, query):
-        """[(doc, score)] triée"""
-        return sorted(self.getScores(query).items(), key=lambda x: x[1], reverse=True)
+        """[(doc, score)] triée par score décroissant puis clé décroissante"""
+        return sorted(self.getScores(query).items(), key=lambda x: (x[1], x[0]), reverse=True)
 
     def avgPrec(self, pred, lab):
         point = []
