@@ -9,7 +9,7 @@ def testVeryShort():
             "july encounter a new home sales rise"]
     parsed = myParser.loadCollection(docs)
     indexer = indexerSimple.IndexerSimple(parsed.docs)
-
+    
     for d in indexer.ind, indexer.inv, indexer.ind_n, indexer.inv_n:
         for e in d.items():
             print(e)
@@ -72,15 +72,12 @@ def testLong():
     assert parsed
     
     indexer = indexerSimple.IndexerSimple(parsed.docs)
-    
-    for e in list(indexer.ind.items())[:10]:
-        print(e)
+    assert len(indexer.ind) == 2459
     
     tf_idf = indexer.create_tf_idf()
+    assert len(tf_idf) == 2459
     
-    for e in list(tf_idf.items())[:10]:
-        print(e)
-    
+
 #testVeryShort()
 testShort()
 testLong()
