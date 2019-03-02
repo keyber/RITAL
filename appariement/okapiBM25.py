@@ -33,9 +33,9 @@ class OkapiBM25(iRModel.IRModel):
         r, R = pertinences
         return np.log((r+.5) / (R-r+.5)) * (N - n - R + r + .5) / (n - r + .5)
 
-    def fit(self, debut1, fin1, nbPoint1, debut2, fin2, nbPoint2, donnees, labels):
-        rangeK = np.linspace(debut1, fin1, nbPoint1)
-        rangeB = np.linspace(debut2, fin2, nbPoint2)
+    def fit(self, possibilities, donnees, labels):
+        rangeK = possibilities[0]
+        rangeB = possibilities[1]
         k1_max, b_max, s_max = 0, 0, float("-inf")
         for k1 in rangeK:
             self.k1 = k1

@@ -8,7 +8,7 @@ import okapiBM25
 import jelinekMercer
 
 
-def testVeryShort():
+def test_ranking_veryshort():
     docs = ["the new home has home been saled on top forecasts",
             "the home sales rise in july",
             "there is an increase in sales in july",
@@ -29,7 +29,7 @@ def testVeryShort():
         assert list0 == sorted(s.keys(), key=lambda x:s[x])
 
 
-def testShort():
+def test_ranking_short():
     parsed = None
     file = "data/cacmShort.txt"
     for path in ["./", "../"]:
@@ -61,7 +61,7 @@ def testShort():
     assert [x[0] for x in rankings[-1]] == ["6", "7", "4", "10", "2"]
 
 
-def testLong():
+def test_ranking_long():
     parsed = None
     file = "data/cacm/cacm.txt"
     for path in ["./", "../"]:
@@ -100,34 +100,7 @@ def testLong():
     assert rankings[5][0][0] == "866"
     assert rankings[6][0][0] == "3156"
 
-def testSortie():
-    parsed = None
-    file = "data/cacm/cacm.txt"
-    for path in ["./", "../"]:
-        try:
-            parsed = myParser.buildDocCollectionSimple(path + file, ".T")
-            break
-        except FileNotFoundError:
-            pass
-    assert parsed
 
-    indexer = indexerSimple.IndexerSimple(parsed.docs)
-    requete = "home computer microphotographi"
-
-    models = [weighter.c1, weighter.c2, weighter.c3, weighter.c4, weighter.c5]
-    models = [clas(indexer) for clas in models]
-    models = [vectoriel.Vectoriel(indexer, weight, False) for weight in models]
-    models.append(jelinekMercer.JelinekMercer(indexer, .2))
-    models.append(okapiBM25.OkapiBM25(indexer, 1.2, .75))
-
-    rankings = [m.getRanking(requete) for m in models]
-
-    for k in range(7):
-        print(len(rankings[k]))
-
-testSortie()
-"""
-testVeryShort()
-testShort()
-testLong()
-"""
+test_ranking_veryshort()
+test_ranking_short()
+test_ranking_long()

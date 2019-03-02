@@ -31,10 +31,9 @@ class JelinekMercer(iRModel.IRModel):
 
         return scores
 
-    def fit(self, debut, fin, nbPoint, donnees, labels):
-        rangeLamba = np.linspace(debut, fin, nbPoint)
+    def fit(self, possibilities, donnees, labels):
         l_max, s_max = 0, float("-inf")
-        for l in rangeLamba:
+        for l in possibilities:
             self.lamb = l
             s = 0
             for k in range(len(donnees)):

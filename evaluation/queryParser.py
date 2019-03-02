@@ -1,6 +1,7 @@
 import string
 import myParser
 import indexerSimple
+table = str.maketrans({key: None for key in string.punctuation})
 
 class Query:
     def __init__(self, identifiant, texte, pertinences):
@@ -14,11 +15,12 @@ class QueryParser:
         self.queries = {}
         for query in queries.docs.values():
             #stemme la requête, enlève la ponctuation
-            query.T = " ".join(w for w in indexerSimple.counter(query.T).keys()) #todo .translate(string.punctuation)
+            
+            query.T = query.T.translate(table)
+            query.T = " ".join(w for w in indexerSimple.counter(query.T).keys())
             
             assert query.T != ""
             self.queries[query.I] = Query(query.I, query.T, pertinences.get(query.I, []))
-        
 
         
 def parse(path):

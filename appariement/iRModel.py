@@ -27,7 +27,7 @@ class IRModel(ABC):
 
     def avgPrec(self, pred, lab):
         point = []
-        for k in range(len(lab)):
+        for k in range(1, len(lab)):
             data = pred[:k]
             theorique = lab[:k]
             nbCorrect = 0

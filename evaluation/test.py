@@ -17,7 +17,6 @@ def testLong():
     file = "data/cisi/cisi"
     for path in ["./", "../"]:
         try:
-            #.qry add after
             parsedQuery = queryParser.parse(path + file)
             parsedText = myParser.buildDocCollectionSimple(path + file + ".txt", ".W")
             break
@@ -34,25 +33,29 @@ def testLong():
     #nombre de requêtes ayant au moins un document pertinent
     assert sum(len(q.pertient_list_id) > 0 for q in parsedQuery.queries.values()) == 76
 
-
     indexer = indexerSimple.IndexerSimple(parsedText.docs)
-
-    #TODO comparer le ranking de nos modèles au vrais documents pertients
-    """
-    m = vectoriel.Vectoriel(indexer, weighter.c1(indexer), False)
-    evalOnCesi(m,parsedQuery)
-    """
-
+    
     models = [weighter.c1, weighter.c2, weighter.c3, weighter.c4, weighter.c5]
     models = [clas(indexer) for clas in models]
     models = [vectoriel.Vectoriel(indexer, weight, False) for weight in models]
-    models.append(jelinekMercer.JelinekMercer(indexer, .2))
-    models.append(okapiBM25.OkapiBM25(indexer, 1.2, .75))
-
+    
+    jelinek = jelinekMercer.JelinekMercer(indexer)
+    models.append(jelinek)
+    
+    okapi = okapiBM25.OkapiBM25(indexer)
+    models.append(okapi)
+    
+    data_fit = [q.T for q in parsedQuery.queries.values()]
+    labels = [q.pertient_list_id for q in parsedQuery.queries.values()]
+    
+    jelinek.fit(np.linspace(0, 2, 4), data_fit, labels)
+    okapi.fit((np.linspace(0, 2, 4), np.linspace(0, 2, 4)), data_fit, labels)
+    print(models)
+    
+    print("précisions")
     for m in models:
-        print("Precision moyenne sur toute les requetes : "+str(evalOnCesi(m,parsedQuery)))
-
-    #NDCG a faire  
+        pred = [m.getRanking(data_fit[k]) for k in range(len(data_fit))]
+        print(m, m.avgPrec(pred, labels))
 
 
 def evalOnCesi(model,parsedQuery):
