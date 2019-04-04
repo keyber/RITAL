@@ -29,7 +29,7 @@ def testShort():
             pass
     assert parsed and parsed2
     
-    #équivalence des deux méthodes de parsing
+    # équivalence des deux méthodes de parsing
     for d1, d2 in zip(sorted(parsed.docs.values(), key=lambda x: x.I), sorted(parsed2.docs.values(), key=lambda x: x.I)):
         assert d1.I == d2.I
         assert d1.T == d2.T

@@ -20,6 +20,8 @@ class IndexerSimple:
         self.inv = None
         self.ind_n = None
         self.inv_n = None
+        self.points_to = None  # liens partant de ce document
+        self.pointed_by = None # liens atteignant ce document
         self._create_indexes()
 
     def _create_indexes(self):
@@ -31,6 +33,7 @@ class IndexerSimple:
         all_words = set()
         ind = {}
         ind_n = {}
+        pointed_by = {d.I:set() for d in self.docs.values()}
         for d in self.docs.values():
             count = counter(d.T)
 
@@ -40,6 +43,10 @@ class IndexerSimple:
 
             f = 1 / sum(count.values())
             ind_n[d.I] = {key: val * f for (key, val) in count.items()}
+            
+            if d.P is not None:
+                for p in d.P:
+                    pointed_by[p.I].add(d)
 
         inv = {w: {d.I: ind[d.I][w] for d in self.docs.values() if w in ind[d.I]} for w in all_words}
         inv_n = {w: {d.I: ind_n[d.I][w] for d in self.docs.values() if w in ind_n[d.I]} for w in all_words}
@@ -48,6 +55,8 @@ class IndexerSimple:
         self.inv = inv
         self.ind_n = ind_n
         self.inv_n = inv_n
+        self.pointed_by = pointed_by
+        self.points_to = {d.I: d.P for d in self.docs.values()}
 
     def tf(self, i, w):
         return self.ind[i].get(w, 0)
