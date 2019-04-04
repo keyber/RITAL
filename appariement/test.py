@@ -123,7 +123,6 @@ def test_alea_pagerank(indexer):
     
     n = 100
     k = 10
-    l = .7
     
     rankings = model.getRanking(requete)[:n]
     graphe = set([doc[0] for doc in rankings])

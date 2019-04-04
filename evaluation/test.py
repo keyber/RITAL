@@ -1,5 +1,4 @@
 import sys
-
 sys.path.append('./indexation/')
 sys.path.append('./appariement/')
 import queryParser
@@ -9,8 +8,9 @@ import vectoriel
 import okapiBM25
 import jelinekMercer
 import indexerSimple
+import pagerank
 import numpy as np
-
+import random
 
 
 def testLong():
@@ -70,30 +70,31 @@ def testPageRank():
             break
         except FileNotFoundError:
             pass
-    
+        
     indexer = indexerSimple.IndexerSimple(parsedText.docs)
+
+    requete = "home computer microphotographi"
+
+    model = vectoriel.Vectoriel(indexer, weighter.c1(indexer), normalized=False)
+
+    n = 100
+    k = 10
+
+    rankings = model.getRanking(requete)[:n]
+    graphe = set([doc[0] for doc in rankings])
+    for d, _ in rankings:
+        graphe |= set(indexer.pointed_by[d])
     
-    models = [weighter.c1, weighter.c2, weighter.c3, weighter.c4, weighter.c5]
-    models = [clas(indexer) for clas in models]
-    models = [vectoriel.Vectoriel(indexer, weight, False) for weight in models]
+        points_to = indexer.points_to[d]
+        graphe |= set(random.sample(points_to, min(k, len(points_to))))
+
+    res = pagerank.calculPr(graphe, indexer.points_to, max_iter=1)
     
-    jelinek = jelinekMercer.JelinekMercer(indexer)
-    models.append(jelinek)
-    
-    okapi = okapiBM25.OkapiBM25(indexer)
-    models.append(okapi)
-    
-    data_fit = [q.T for q in parsedQuery.queries.values()]
     labels = [q.pertient_list_id for q in parsedQuery.queries.values()]
     
-    jelinek.fit(np.linspace(0, 2, 4), data_fit, labels)
-    okapi.fit((np.linspace(0, 2, 4), np.linspace(0, 2, 4)), data_fit, labels)
-    print(models)
-    
     print("précisions")
-    for m in models:
-        pred = [m.getRanking(data_fit[k]) for k in range(len(data_fit))]
-        print(m, m.avgPrec(pred, labels))
+    pred = [m.getRanking(data_fit[k]) for k in range(len(data_fit))]
+    print(m, m.avgPrec(pred, labels))
 
 
 def evalOnCesi(model,parsedQuery):
