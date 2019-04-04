@@ -7,7 +7,14 @@ def calculSomme(Pr):
         somme+=Pr[key]
     return somme
 
+def compte(j,liste):
+    compteur=0
+    for el in liste:
+        if(el==j):
+            compteur+=1
+    return compteur
 def calculPr(sommet,arc,a,d,max_iter,condition_arret):
+    arc=set(arc)
     n=len(sommet)
     Pr = {i:1/n for i in sommet}
     sommePr=calculSomme(Pr)
@@ -19,7 +26,7 @@ def calculPr(sommet,arc,a,d,max_iter,condition_arret):
             somme=0
             for i in sommet:
                 if(j in arc[i]):
-                    somme+=Pr[i]/len(arc[i])
+                    somme+=(Pr[i]/len(arc[i]))*compte(j,arc[i])
             tempPr[j]=d*somme+(1-d)*a[j]
         sommeAncienPr=calculSomme(Pr)
         sommePr = calculSomme(tempPr)
