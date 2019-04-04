@@ -22,12 +22,13 @@ class PagerankMarcheAlea(iRModel.IRModel):
         self.indexer = indexer
         # on ne fit pas le modèle
         self.model = modelSimple
-        self.n = 100
-        self.k = 10
-        self.max_iter = 10
+        self.n = 50
+        self.k = 5
+        self.max_iter = 50
         
     def _getScores(self, query, pertinences=None):
-        rankings = sorted(self.model._getScores(query).items(), key=lambda x: (x[1], x[0]), reverse=True)[:self.n]
+        apriori = self.model._getScores(query)
+        rankings = sorted(apriori.items(), key=lambda x: (x[1], x[0]), reverse=True)[:self.n]
         
         graphe = set([doc[0] for doc in rankings])
         # cela détermine un graphe initial de documents
@@ -41,7 +42,7 @@ class PagerankMarcheAlea(iRModel.IRModel):
             points_to = self.indexer.points_to[d]
             graphe |= set(random.sample(points_to, min(self.k, len(points_to))))
         
-        return self.calculPr(graphe, self.indexer.points_to, max_iter=self.max_iter)
+        return self.calculPr(graphe, self.indexer.points_to, max_iter=self.max_iter, apriori=apriori)
     
     def calculPr(self, sommet, arc, apriori=None, d=.85, max_iter=10, eps=1e-5):
         if apriori is None:
@@ -63,6 +64,5 @@ class PagerankMarcheAlea(iRModel.IRModel):
             sommePr = _calculSomme(tempPr)
             pr = tempPr
             compteur += 1
-        print(pr)
         return pr
         # return sorted(pr.items(), key=lambda x:(x[1], x[0]), reverse=True)

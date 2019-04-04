@@ -44,15 +44,15 @@ def testLong():
     okapi = okapiBM25.OkapiBM25(indexer)
     models.append(okapi)
     
-    pr = pagerank.PagerankMarcheAlea(indexer, models[0])
-    models.append(pr)
-
     data_fit = [q.T for q in parsedQuery.queries.values()]
     labels = [q.pertient_list_id for q in parsedQuery.queries.values()]
     
     print("fit")
-    # jelinek.fit(np.linspace(0, 2, 4), data_fit, labels)
-    # okapi.fit((np.linspace(0, 2, 4), np.linspace(0, 2, 4)), data_fit, labels)
+    jelinek.fit(np.linspace(0, 2, 2), data_fit, labels)
+    okapi.fit((np.linspace(0, 2, 2), np.linspace(0, 2, 2)), data_fit, labels)
+    
+    for i in range(len(models)):
+        models.append(pagerank.PagerankMarcheAlea(indexer, models[i]))
 
     print("précisions")
     for m in models:
