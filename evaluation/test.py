@@ -34,28 +34,30 @@ def testLong():
     assert sum(len(q.pertient_list_id) > 0 for q in parsedQuery.queries.values()) == 76
 
     indexer = indexerSimple.IndexerSimple(parsedText.docs)
-    
+
     models = [weighter.c1, weighter.c2, weighter.c3, weighter.c4, weighter.c5]
     models = [clas(indexer) for clas in models]
     models = [vectoriel.Vectoriel(indexer, weight, False) for weight in models]
-    
+
     jelinek = jelinekMercer.JelinekMercer(indexer)
     models.append(jelinek)
-    
+
     okapi = okapiBM25.OkapiBM25(indexer)
     models.append(okapi)
-    
+
     data_fit = [q.T for q in parsedQuery.queries.values()]
     labels = [q.pertient_list_id for q in parsedQuery.queries.values()]
-    
+
     jelinek.fit(np.linspace(0, 2, 4), data_fit, labels)
     okapi.fit((np.linspace(0, 2, 4), np.linspace(0, 2, 4)), data_fit, labels)
-    print(models)
-    
+
     print("précisions")
     for m in models:
         pred = [m.getRanking(data_fit[k]) for k in range(len(data_fit))]
-        print(m, m.avgPrec(pred, labels))
+        avgPrec=0
+        for k in range(len(pred)):
+            avgPrec+=m.avgPrec(pred[k], labels[k])
+        print(m,avgPrec/len(pred))
 
 
 def evalOnCesi(model,parsedQuery):
