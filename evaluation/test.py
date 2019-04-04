@@ -10,7 +10,6 @@ import jelinekMercer
 import indexerSimple
 import pagerank
 import numpy as np
-import random
 
 
 def testLong():
@@ -24,7 +23,6 @@ def testLong():
             break
         except FileNotFoundError:
             pass
-    
     assert parsedQuery
     assert parsedText
     
@@ -34,69 +32,35 @@ def testLong():
     #nombre de requêtes ayant au moins un document pertinent
     assert sum(len(q.pertient_list_id) > 0 for q in parsedQuery.queries.values()) == 76
     
+    print("calcul indexer")
     indexer = indexerSimple.IndexerSimple(parsedText.docs)
 
     models = [weighter.c1, weighter.c2, weighter.c3, weighter.c4, weighter.c5]
     models = [clas(indexer) for clas in models]
     models = [vectoriel.Vectoriel(indexer, weight, False) for weight in models]
-
     jelinek = jelinekMercer.JelinekMercer(indexer)
     models.append(jelinek)
 
     okapi = okapiBM25.OkapiBM25(indexer)
     models.append(okapi)
+    
+    pr = pagerank.PagerankMarcheAlea(indexer, models[0])
+    models.append(pr)
 
     data_fit = [q.T for q in parsedQuery.queries.values()]
     labels = [q.pertient_list_id for q in parsedQuery.queries.values()]
-
-    jelinek.fit(np.linspace(0, 2, 4), data_fit, labels)
-    okapi.fit((np.linspace(0, 2, 4), np.linspace(0, 2, 4)), data_fit, labels)
+    
+    print("fit")
+    # jelinek.fit(np.linspace(0, 2, 4), data_fit, labels)
+    # okapi.fit((np.linspace(0, 2, 4), np.linspace(0, 2, 4)), data_fit, labels)
 
     print("précisions")
     for m in models:
         pred = [m.getRanking(data_fit[k]) for k in range(len(data_fit))]
-        avgPrec=0
+        avgPrec = 0
         for k in range(len(pred)):
             avgPrec+=m.avgPrec(pred[k], labels[k])
         print(m,avgPrec/len(pred))
-
-
-def testPageRank():
-    parsedQuery = None
-    parsedText = None
-    file = "data/cisi/cisi"
-    for path in ["./", "../"]:
-        try:
-            parsedQuery = queryParser.parse(path + file)
-            parsedText = myParser.buildDocCollectionSimple(path + file + ".txt", ".W")
-            break
-        except FileNotFoundError:
-            pass
-        
-    indexer = indexerSimple.IndexerSimple(parsedText.docs)
-
-    requete = "home computer microphotographi"
-
-    model = vectoriel.Vectoriel(indexer, weighter.c1(indexer), normalized=False)
-
-    n = 100
-    k = 10
-
-    rankings = model.getRanking(requete)[:n]
-    graphe = set([doc[0] for doc in rankings])
-    for d, _ in rankings:
-        graphe |= set(indexer.pointed_by[d])
-    
-        points_to = indexer.points_to[d]
-        graphe |= set(random.sample(points_to, min(k, len(points_to))))
-
-    res = pagerank.calculPr(graphe, indexer.points_to, max_iter=1)
-    
-    labels = [q.pertient_list_id for q in parsedQuery.queries.values()]
-    
-    print("précisions")
-    pred = [m.getRanking(data_fit[k]) for k in range(len(data_fit))]
-    print(m, m.avgPrec(pred, labels))
 
 
 def evalOnCesi(model,parsedQuery):
@@ -166,3 +130,4 @@ def NDCG(labelModel,labelIdeale,rang):
     return DCG(labelModel,rang)/DCG(labelIdeale,rang)
 
 testLong()
+# testPageRank()

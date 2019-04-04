@@ -43,5 +43,5 @@ class IRModel(ABC):
             for p in pointRappel:
                 pointFinal.append(np.interp(p, [p[0] for p in point], [p[1] for p in point]))
             return np.mean(pointFinal)
-        else:
+        else: # une requete sans label compte comme faux
             return 0
