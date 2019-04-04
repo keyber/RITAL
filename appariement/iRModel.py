@@ -44,4 +44,5 @@ class IRModel(ABC):
                 pointFinal.append(np.interp(p, [p[0] for p in point], [p[1] for p in point]))
             return np.mean(pointFinal)
         else:
-            return 0
+            #si on n'a pas de labels on met 0.5
+            return 0.5

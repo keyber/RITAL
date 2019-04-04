@@ -23,6 +23,13 @@ def testLong():
         except FileNotFoundError:
             pass
 
+    ###################TEST###########################
+    for q in parsedQuery.queries.values():
+        print(q.I)
+        print(q.pertient_list_id)
+
+
+    ##################FIN TEST##################
     assert parsedQuery
     assert parsedText
 
