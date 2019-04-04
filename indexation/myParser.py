@@ -68,7 +68,9 @@ def buildDocCollectionSimple(file_path, balise=bal_t, balise2=None):
                     s = f.readline()
                     # jusqu'à rencontrer n'importe quelle balise
                     while s[:2] not in balises and s:
-                        pointed.append(int(s.split()[0]))
+                        l = s.split()
+                        if len(l)>0:
+                            pointed.append(l[0])
                         s = f.readline()
 
             res.append((iDoc, " ".join(lines), set(pointed)))
