@@ -3,7 +3,7 @@ import numpy as np
 
 
 class OkapiBM25(iRModel.IRModel):
-    def __init__(self, indexer, k1=None, b=None):
+    def __init__(self, indexer, k1=1.2, b=.75):
         super().__init__(indexer)
         self.k1 = k1 #1.2
         self.b = b #.75

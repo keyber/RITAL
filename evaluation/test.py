@@ -62,45 +62,62 @@ def testLong():
             avgPrec+=m.avgPrec(pred[k], labels[k])
         print(m,avgPrec/len(pred))
 
+# testLong()
+# testPageRank()
 
-def evalOnCesi(model,parsedQuery):
-    rankings=[]
-    for cle in parsedQuery.queries.keys():
-        rankings.append(model.getRanking(parsedQuery.queries[cle].T))
 
-    #get ranking without score
-    rankNoScore = []
-    for lr in rankings:
-        tmp=[]
-        for r in lr:
-            tmp.append(r[0])
-        rankNoScore.append(tmp)
+#
+#
+# def evalOnCesi(model, parsedQuery):
+#     rankings=[]
+#     for cle in parsedQuery.queries.keys():
+#         rankings.append(model.getRanking(parsedQuery.queries[cle].T))
+#
+#     #get ranking without score
+#     rankNoScore = []
+#     for lr in rankings:
+#         tmp=[]
+#         for r in lr:
+#             tmp.append(r[0])
+#         rankNoScore.append(tmp)
+#
+#     #get the label from the dataset
+#     dico_lab={}
+#     file = open("data/cisi/cisi.rel","r")
+#     lines = file.readlines()
+#     for l in lines:
+#         l=l.replace("     "," ")
+#         l=l.replace("    "," ")
+#         l=l.replace("   "," ")
+#         l=l.replace("  "," ")
+#         l=l.replace(" "," ")
+#         info = l.split(" ")
+#         idRequete = info[1]
+#         idDoc = info[2].split("\t")[0]
+#         if(idRequete not in dico_lab):
+#             dico_lab[idRequete]=[idDoc]
+#         else:
+#             dico_lab[idRequete].append(idDoc)
+#     #Calcul de la précision moyenne sur toute les requetes
+#     compteur=0
+#     somme=0
+#     for cleLab in dico_lab.keys():
+#         somme+=avgPrec(rankNoScore[compteur],dico_lab[cleLab])
+#         compteur+=1
+#     return somme/compteur
+#
+# evalOnCesi()
+#
+#
+#
+#
+#
+#
+#
+#
 
-    #get the label from the dataset
-    dico_lab={}
-    file = open("data/cisi/cisi.rel","r")
-    lines = file.readlines()
-    for l in lines:
-        l=l.replace("     "," ")
-        l=l.replace("    "," ")
-        l=l.replace("   "," ")
-        l=l.replace("  "," ")
-        l=l.replace(" "," ")
-        info = l.split(" ")
-        idRequete = info[1]
-        idDoc = info[2].split("\t")[0]
-        if(idRequete not in dico_lab):
-            dico_lab[idRequete]=[idDoc]
-        else:
-            dico_lab[idRequete].append(idDoc)
-    #Calcul de la précision moyenne sur toute les requetes
-    compteur=0
-    somme=0
-    for cleLab in dico_lab.keys():
-        somme+=avgPrec(rankNoScore[compteur],dico_lab[cleLab])
-        compteur+=1
-    return somme/compteur
 
+"""
 def avgPrec(pred, lab):
     point = []
     for k in range(1,len(lab)+1):
@@ -128,6 +145,4 @@ def DCG(label,rang):
 
 def NDCG(labelModel,labelIdeale,rang):
     return DCG(labelModel,rang)/DCG(labelIdeale,rang)
-
-testLong()
-# testPageRank()
+"""

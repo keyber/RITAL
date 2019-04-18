@@ -1,5 +1,4 @@
 import iRModel
-import numpy as np
 
 
 class JelinekMercer(iRModel.IRModel):
@@ -8,7 +7,7 @@ class JelinekMercer(iRModel.IRModel):
     indépendances termes requete
     termes requete distincts"""
 
-    def __init__(self, indexer, lamb=None):
+    def __init__(self, indexer, lamb=1):
         super().__init__(indexer)
         self.lamb = lamb
 
