@@ -6,6 +6,9 @@ import indexerSimple
 import myParser
 import okapiBM25
 import jelinekMercer
+import pagerank
+import random
+import time
 
 
 def test_ranking_veryshort():
@@ -101,6 +104,68 @@ def test_ranking_long():
     assert rankings[6][0][0] == "3156"
 
 
-test_ranking_veryshort()
-test_ranking_short()
-test_ranking_long()
+def test_full_pagerank(indexer):
+    print("full pagerank")
+    print("taille", len(indexer.points_to.keys()))
+    t = time.time()
+    res = pagerank.calculPr(indexer.points_to.keys(), indexer.points_to, max_iter=10)
+    print("res", res, '\n')
+    print("time", time.time()-t)
+
+
+def test_alea_pagerank(indexer):
+    print("random walk page rank")
+    t = time.time()
+    
+    requete = "home computer microphotographi"
+    
+    model = vectoriel.Vectoriel(indexer, weighter.c1(indexer), normalized=False)
+    
+    n = 100
+    k = 10
+    
+    rankings = model.getRanking(requete)[:n]
+    graphe = set([doc[0] for doc in rankings])
+    # print(len(indexer.docs))
+    # print(rankings)
+    # cela détermine un graphe initial de documents
+    
+    # on étend ce graphe en rajoutant des documents pointés par et pointant vers le graphe actuel
+    for d, _ in rankings:
+        # on ajoute tous les docs pointés par d
+        graphe |= set(indexer.pointed_by[d])
+        
+        # on ajoute k docs (au plus) pointant d
+        points_to = indexer.points_to[d]
+        graphe |= set(random.sample(points_to, min(k, len(points_to))))
+    
+    res = pagerank.calculPr(graphe, indexer.points_to, max_iter=1)
+    
+    
+    print("res", res)
+    print("time", time.time()-t)
+    
+    
+def main():
+    # test_ranking_veryshort()
+    # test_ranking_short()
+    # test_ranking_long()
+    
+    parsed = None
+    # exécution d'un modèle simple
+    file = "data/cacm/cacm.txt"
+    for path in ["./", "../"]:
+        try:
+            parsed = myParser.buildDocCollectionSimple(path + file, ".T", balise2=".X")
+            break
+        except FileNotFoundError:
+            pass
+    assert parsed
+    
+    indexer = indexerSimple.IndexerSimple(parsed.docs)
+    
+    # test_full_pagerank(indexer)
+    test_alea_pagerank(indexer)
+
+if __name__ == '__main__':
+    main()
