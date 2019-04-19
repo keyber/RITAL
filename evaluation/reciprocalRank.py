@@ -5,8 +5,8 @@ class ReciprocalRank(evalMesure.EvalMesure):
         if len(labels)==0:
             return 0
         
-        best_id = pred[0]
+        best_id = pred[0][0]
         if best_id not in labels:
             return 0
         
-        return 1 / labels.index(best_id)
+        return 1 / (labels.index(best_id) + 1)

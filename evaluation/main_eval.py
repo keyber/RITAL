@@ -9,7 +9,6 @@ import okapiBM25
 import jelinekMercer
 import indexerSimple
 import pagerank
-import numpy as np
 
 import averagePrecision
 import fMesureK
@@ -52,27 +51,30 @@ def eval():
     for i in range(len(models)):
         models.append(pagerank.PagerankMarcheAlea(indexer, models[i]))
     
-    print(labels[:10])
-    for x in labels[0]:
-        print(type(x))
-        break
-    
     k = 9
     metrics = [
         averagePrecision.AveragePrecision(),
-        fMesureK.FMesureK(k),
-        NDCG.NDCG(k),
         precisionAtK.PrecisionAtK(k),
+        fMesureK.FMesureK(1, k),
         rappelAtK.RappelAtK(k),
+        NDCG.NDCG(k),
         reciprocalRank.ReciprocalRank()]
         
-    print("précisions\n")
-    for model in models:
-        print("model : ", model)
+    perf = []
+    print("précisions")
+    print(models)
+    print(metrics)
+    for i, model in enumerate(models):
+        print(i,"/", len(models))
+        perf.append([])
         pred = [model.getRanking(data_fit[k]) for k in range(len(data_fit))]
         
         for metric in metrics:
-            print("metric : ", metric)
-            print(metric.eval_list_query(pred, labels))
+            score, std = metric.eval_list_query(pred, labels)
+            perf[-1].append(score)
     
+    import matplotlib.pyplot as plt
+    plt.imshow(perf)
+    plt.colorbar()
+    plt.show()
 eval()

@@ -15,9 +15,9 @@ class NDCG(evalMesure.EvalMesure):
     def DCG(self, pred, labels):
         labels = set(labels)
         
-        somme = 1 if str(pred[0]) in labels else 0
+        somme = 1 if pred[0] in labels else 0
         for k in range(1, self.rang):
-            if str(pred[k]) in labels:
+            if pred[k][0] in labels:
                 somme += 1 / np.log2(k + 1)
                 
         return somme
@@ -25,6 +25,5 @@ class NDCG(evalMesure.EvalMesure):
     def evalQuery(self, pred, labels):
         if len(labels)==0:
             return 0
-        
         ndcg = self.DCG(pred, labels) / self.iDCG()
         return ndcg

@@ -1,4 +1,6 @@
 import string
+import sys
+sys.path.append('./indexation/')
 import myParser
 import indexerSimple
 table = str.maketrans({key: None for key in string.punctuation})

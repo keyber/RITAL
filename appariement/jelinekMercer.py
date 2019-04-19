@@ -7,7 +7,7 @@ class JelinekMercer(iRModel.IRModel):
     indépendances termes requete
     termes requete distincts"""
 
-    def __init__(self, indexer, lamb=1):
+    def __init__(self, indexer, lamb=.1):
         super().__init__(indexer)
         self.lamb = lamb
 
