@@ -58,7 +58,8 @@ class IndexerSimple:
         self.inv_n = inv_n
         self.pointed_by = pointed_by
         # des documents pointés ne sont pas des documents du corpus
-        self.points_to = {d.I: [x for x in d.P if x in pointed_by] for d in self.docs.values()}
+        
+        self.points_to = {d.I: [x for x in d.P if x in pointed_by] for d in self.docs.values() if d.P is not None}
 
     def tf(self, i, w):
         return self.ind[i].get(w, 0)

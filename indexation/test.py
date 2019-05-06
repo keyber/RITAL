@@ -61,6 +61,9 @@ def testShort():
 
 
 def testLong():
+    print("test long")
+    print("lecture")
+    
     parsed = None
     file = "data/cisi/cisi.txt"
     for path in ["./", "../"]:
@@ -71,9 +74,11 @@ def testLong():
             pass
     assert parsed
     
+    print("création index")
     indexer = indexerSimple.IndexerSimple(parsed.docs)
     assert len(indexer.ind) == 2459
     
+    print("création tfidf")
     tf_idf = indexer.create_tf_idf()
     assert len(tf_idf) == 2459
     

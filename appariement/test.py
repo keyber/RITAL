@@ -108,7 +108,7 @@ def test_full_pagerank(indexer):
     print("full pagerank")
     print("taille", len(indexer.points_to.keys()))
     t = time.time()
-    res = pagerank.calculPr(indexer.points_to.keys(), indexer.points_to, max_iter=10)
+    res = pagerank.calculPr(indexer.points_to.keys(), indexer.points_to, max_iter=1)
     print("res", res, '\n')
     print("time", time.time()-t)
 
@@ -147,9 +147,9 @@ def test_alea_pagerank(indexer):
     
     
 def main():
-    # test_ranking_veryshort()
-    # test_ranking_short()
-    # test_ranking_long()
+    test_ranking_veryshort()
+    test_ranking_short()
+    test_ranking_long()
     
     parsed = None
     # exécution d'un modèle simple
@@ -164,7 +164,7 @@ def main():
     
     indexer = indexerSimple.IndexerSimple(parsed.docs)
     
-    # test_full_pagerank(indexer)
+    test_full_pagerank(indexer)
     test_alea_pagerank(indexer)
 
 if __name__ == '__main__':
