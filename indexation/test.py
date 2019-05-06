@@ -83,6 +83,6 @@ def testLong():
     assert len(tf_idf) == 2459
     
 
-#testVeryShort()
+testVeryShort()
 testShort()
 testLong()

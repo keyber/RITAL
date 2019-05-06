@@ -48,18 +48,26 @@ def testLong():
     labels = [q.pertient_list_id for q in parsedQuery.queries.values()]
 
     print("fit")
-    jelinek.fit(np.linspace(0, 2, 2), data_fit, labels)
-    okapi.fit((np.linspace(0, 2, 2), np.linspace(0, 2, 2)), data_fit, labels)
+    # jelinek.fit(np.linspace(0, 2, 2), data_fit, labels)
+    # okapi.fit((np.linspace(0, 2, 2), np.linspace(0, 2, 2)), data_fit, labels)
+    
+    # train test
+    print(len(data_fit))
+    n = 100
+    jelinek.fit(np.linspace(.2, .7, 3), data_fit[:n], labels[:n])
+    okapi.fit((np.linspace(0, 2, 2), np.linspace(0, 2, 2)), data_fit[:n], labels[:n])
 
     for i in range(len(models)):
         models.append(pagerank.PagerankMarcheAlea(indexer, models[i]))
+    
+    models[-2].fit(np.linspace(.2, .7, 3), data_fit[:n], labels[:n])
 
     print("précisions")
     for m in models:
-        pred = [m.getRanking(data_fit[k]) for k in range(len(data_fit))]
+        pred = [m.getRanking(d) for d in data_fit[n:]]
         avgPrec = 0
-        for k in range(len(pred)):
-            avgPrec+=m.avgPrec(pred[k], labels[k])
+        for p, l in zip(pred, labels[n:]):
+            avgPrec += m.avgPrec(p, l)
         print(m,avgPrec/len(pred))
 
 testLong()

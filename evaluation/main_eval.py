@@ -9,13 +9,13 @@ import okapiBM25
 import jelinekMercer
 import indexerSimple
 import pagerank
-
 import averagePrecision
 import fMesureK
 import NDCG
 import precisionAtK
 import rappelAtK
 import reciprocalRank
+import numpy as np
 
 
 def eval():
@@ -61,7 +61,6 @@ def eval():
         reciprocalRank.ReciprocalRank()]
 
     perf = []
-    print("précisions")
     print(models)
     print(metrics)
     for i, model in enumerate(models):
@@ -72,6 +71,7 @@ def eval():
         for metric in metrics:
             score, std = metric.eval_list_query(pred, labels)
             perf[-1].append(score)
+        print([round(x, 4) for x in perf[-1]])
 
     import matplotlib.pyplot as plt
     plt.imshow(perf)

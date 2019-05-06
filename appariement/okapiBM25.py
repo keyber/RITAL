@@ -34,6 +34,8 @@ class OkapiBM25(iRModel.IRModel):
         return np.log((r+.5) / (R-r+.5)) * (N - n - R + r + .5) / (n - r + .5)
 
     def fit(self, possibilities, donnees, labels):
+        # from sklearn.model_selection import cross_validate
+        
         rangeK = possibilities[0]
         rangeB = possibilities[1]
         k1_max, b_max, s_max = 0, 0, float("-inf")

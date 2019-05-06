@@ -22,9 +22,10 @@ class PagerankMarcheAlea(iRModel.IRModel):
         self.indexer = indexer
         # on ne fit pas le modèle
         self.model = modelSimple
-        self.n = 50
+        self.n = 10
         self.k = 5
-        self.max_iter = 50
+        self.max_iter = 1000
+        self.d = .85
         
     def _getScores(self, query, pertinences=None):
         apriori = self.model._getScores(query)
@@ -42,9 +43,25 @@ class PagerankMarcheAlea(iRModel.IRModel):
             points_to = self.indexer.points_to[d]
             graphe |= set(random.sample(points_to, min(self.k, len(points_to))))
         
-        return calculPr(graphe, self.indexer.points_to, max_iter=self.max_iter, apriori=apriori)
+        return calculPr(graphe, self.indexer.points_to, max_iter=self.max_iter, apriori=apriori, d=self.d)
+
+    def fit(self, possibilities, donnees, labels):
+        rangeK = possibilities
+        d_max, s_max = 0, float("-inf")
+        for d in rangeK:
+            self.d = d
+            s = 0
+            for k in range(len(donnees)):
+                predictionModele = self.getRanking(donnees[k])
+                s += self.avgPrec(predictionModele, labels[k])
+
+            if s > s_max:
+                s_max = s
+                d_max = d
+
+        self.d = d_max
     
-def calculPr(sommet, arc, apriori=None, d=.85, max_iter=10, eps=1e-5):
+def calculPr(sommet, arc, apriori=None, d=.85, max_iter=100, eps=1e-9):
     if apriori is None:
         apriori = {s: 1 for s in sommet}
     n = len(sommet)
