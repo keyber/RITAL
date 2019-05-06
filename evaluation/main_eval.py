@@ -29,7 +29,7 @@ def eval():
             break
         except FileNotFoundError:
             pass
-    
+
     indexer = indexerSimple.IndexerSimple(parsedText.docs)
 
     models = [weighter.c1, weighter.c2, weighter.c3, weighter.c4, weighter.c5]
@@ -43,14 +43,14 @@ def eval():
 
     data_fit = [q.T for q in parsedQuery.queries.values()]
     labels = [q.pertient_list_id for q in parsedQuery.queries.values()]
-    
+
     print("fit")
     # jelinek.fit(np.linspace(0, 2, 2), data_fit, labels)
     # okapi.fit((np.linspace(0, 2, 2), np.linspace(0, 2, 2)), data_fit, labels)
-    
+
     for i in range(len(models)):
         models.append(pagerank.PagerankMarcheAlea(indexer, models[i]))
-    
+
     k = 9
     metrics = [
         averagePrecision.AveragePrecision(),
@@ -59,7 +59,7 @@ def eval():
         rappelAtK.RappelAtK(k),
         NDCG.NDCG(k),
         reciprocalRank.ReciprocalRank()]
-        
+
     perf = []
     print("précisions")
     print(models)
@@ -68,13 +68,15 @@ def eval():
         print(i,"/", len(models))
         perf.append([])
         pred = [model.getRanking(data_fit[k]) for k in range(len(data_fit))]
-        
+
         for metric in metrics:
             score, std = metric.eval_list_query(pred, labels)
             perf[-1].append(score)
-    
+
     import matplotlib.pyplot as plt
     plt.imshow(perf)
     plt.colorbar()
+    plt.xlabel("Metrique")
+    plt.ylabel("Modèle")
     plt.show()
 eval()
