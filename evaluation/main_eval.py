@@ -78,5 +78,6 @@ def eval():
     plt.colorbar()
     plt.xlabel("Metrique")
     plt.ylabel("Modèle")
+    plt.figtext(0,0,"Metriques : 0 : averagePrecision,1 : precisionAtK,2 : fMesureK,3 : rappelAtK,4 : NDCG,5 : reciprocalRank;Modèles : 0-4: Vectoriel, 5 : jelinekMercer,6 : okapiBM25, 7-12 : avec pagerank")
     plt.show()
 eval()
